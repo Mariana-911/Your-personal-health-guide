@@ -1,0 +1,658 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دليل الفتيات - Period Guide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap');
+        
+        body {
+            font-family: 'Cairo', sans-serif;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 50%, #f9a8d4 100%);
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .section-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out;
+        }
+        
+        .section-content.active {
+            max-height: 2000px;
+        }
+        
+        .flower-decoration {
+            position: absolute;
+            opacity: 0.1;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen">
+    <!-- Language Toggle & Gender Check -->
+    <div id="initial-screen" class="min-h-screen flex items-center justify-center p-4">
+        <div class="bg-white/80 backdrop-blur-sm rounded-3xl p-8 max-w-md w-full text-center shadow-2xl">
+            <div class="mb-6">
+                <div class="text-6xl mb-4">🌸</div>
+                <h1 class="text-2xl font-bold text-pink-800 mb-2" id="welcome-title">مرحباً بك</h1>
+                <p class="text-pink-600" id="welcome-subtitle">دليلك الشخصي للعناية بصحتك</p>
+            </div>
+            
+            <!-- Language Toggle -->
+            <div class="mb-6">
+                <button onclick="toggleLanguage()" class="bg-pink-500 hover:bg-pink-600 text-white px-6 py-2 rounded-full transition-colors">
+                    <span id="lang-toggle">English</span>
+                </button>
+            </div>
+            
+            <!-- Gender Check -->
+            <div class="mb-6">
+                <p class="text-pink-700 mb-4 font-semibold" id="gender-question">هل أنت أنثى؟</p>
+                <div class="flex gap-4 justify-center">
+                    <button onclick="checkGender(true)" class="bg-pink-500 hover:bg-pink-600 text-white px-8 py-3 rounded-full transition-colors" id="yes-btn">نعم</button>
+                    <button onclick="checkGender(false)" class="bg-gray-400 hover:bg-gray-500 text-white px-8 py-3 rounded-full transition-colors" id="no-btn">لا</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Website -->
+    <div id="main-website" class="hidden min-h-screen">
+        <!-- Header -->
+        <header class="bg-white/90 backdrop-blur-sm shadow-lg sticky top-0 z-50">
+            <div class="container mx-auto px-4 py-4">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center gap-3">
+                        <div class="text-3xl">🌸</div>
+                        <h1 class="text-2xl font-bold text-pink-800" id="site-title">دليل الفتيات</h1>
+                    </div>
+                    <button onclick="toggleLanguage()" class="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded-full text-sm transition-colors">
+                        <span id="header-lang-toggle">English</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="py-16 relative overflow-hidden">
+            <div class="flower-decoration text-9xl top-10 left-10">🌺</div>
+            <div class="flower-decoration text-7xl bottom-20 right-20">🌸</div>
+            <div class="container mx-auto px-4 text-center">
+                <h2 class="text-4xl font-bold text-pink-800 mb-4" id="hero-title">رحلتك نحو فهم جسدك بشكل أفضل</h2>
+                <p class="text-xl text-pink-600 mb-8" id="hero-subtitle">دليل شامل للعناية بصحتك أثناء الدورة الشهرية</p>
+            </div>
+        </section>
+
+        <!-- Main Sections -->
+        <main class="container mx-auto px-4 pb-16">
+            <div class="grid gap-6 max-w-4xl mx-auto">
+                
+                <!-- Section 1: Period Tracker -->
+                <div class="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden card-hover">
+                    <button onclick="toggleSection('tracker')" class="w-full p-6 text-right bg-gradient-to-r from-pink-500 to-pink-400 text-white">
+                        <div class="flex items-center justify-between">
+                            <div class="text-3xl">📅</div>
+                            <h3 class="text-xl font-bold" id="tracker-title">تتبع الدورة الشهرية</h3>
+                            <div class="text-2xl" id="tracker-arrow">▼</div>
+                        </div>
+                    </button>
+                    <div id="tracker-content" class="section-content p-6">
+                        <div class="mb-6">
+                            <label class="block text-pink-700 font-semibold mb-2" id="last-period-label">تاريخ آخر دورة شهرية:</label>
+                            <input type="date" id="last-period-date" class="w-full p-3 border-2 border-pink-200 rounded-lg focus:border-pink-500 focus:outline-none">
+                        </div>
+                        <button onclick="calculateNextPeriod()" class="bg-pink-500 hover:bg-pink-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors" id="calculate-btn">احسبي موعد الدورة القادمة</button>
+                        <div id="result" class="mt-6 p-4 bg-pink-50 rounded-lg hidden">
+                            <h4 class="font-bold text-pink-800 mb-2" id="result-title">النتيجة:</h4>
+                            <p id="next-period-date" class="text-pink-700"></p>
+                            <p id="days-remaining" class="text-pink-600 mt-2"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 2: Pain Relief Tips -->
+                <div class="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden card-hover">
+                    <button onclick="toggleSection('tips')" class="w-full p-6 text-right bg-gradient-to-r from-pink-500 to-pink-400 text-white">
+                        <div class="flex items-center justify-between">
+                            <div class="text-3xl">💆‍♀️</div>
+                            <h3 class="text-xl font-bold" id="tips-title">نصائح للألم والتقلصات</h3>
+                            <div class="text-2xl" id="tips-arrow">▼</div>
+                        </div>
+                    </button>
+                    <div id="tips-content" class="section-content p-6">
+                        <div class="space-y-4" id="pain-tips">
+                            <div class="flex items-start gap-3 p-4 bg-pink-50 rounded-lg">
+                                <div class="text-2xl">🍵</div>
+                                <p class="text-pink-800">اشربي شاي الأعشاب مثل البابونج، النعناع، أو الزنجبيل الدافئ</p>
+                            </div>
+                            <div class="flex items-start gap-3 p-4 bg-pink-50 rounded-lg">
+                                <div class="text-2xl">🔥</div>
+                                <p class="text-pink-800">ضعي كمادة دافئة أو قنينة ماء ساخن على أسفل البطن</p>
+                            </div>
+                            <div class="flex items-start gap-3 p-4 bg-pink-50 rounded-lg">
+                                <div class="text-2xl">🧘‍♀️</div>
+                                <p class="text-pink-800">جربي تمارين التمدد الخفيفة أو وضعيات يوغا بسيطة</p>
+                            </div>
+                            <div class="flex items-start gap-3 p-4 bg-pink-50 rounded-lg">
+                                <div class="text-2xl">🍫</div>
+                                <p class="text-pink-800">تناولي أطعمة غنية بالمغنيسيوم (الشوكولا الداكنة، الموز، المكسرات)</p>
+                            </div>
+                            <div class="flex items-start gap-3 p-4 bg-pink-50 rounded-lg">
+                                <div class="text-2xl">🚫</div>
+                                <p class="text-pink-800">ابتعدي عن المشروبات الغازية والكافيين لأنها تزيد التقلصات</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 3: Nutrition -->
+                <div class="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden card-hover">
+                    <button onclick="toggleSection('nutrition')" class="w-full p-6 text-right bg-gradient-to-r from-pink-500 to-pink-400 text-white">
+                        <div class="flex items-center justify-between">
+                            <div class="text-3xl">🥗</div>
+                            <h3 class="text-xl font-bold" id="nutrition-title">نظام غذائي لفترتك</h3>
+                            <div class="text-2xl" id="nutrition-arrow">▼</div>
+                        </div>
+                    </button>
+                    <div id="nutrition-content" class="section-content p-6">
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div>
+                                <h4 class="text-lg font-bold text-pink-800 mb-4 flex items-center gap-2">
+                                    <span>✅</span>
+                                    <span id="good-foods-title">أطعمة مفيدة</span>
+                                </h4>
+                                <div class="space-y-3" id="good-foods">
+                                    <div class="p-3 bg-green-50 rounded-lg">
+                                        <p class="font-semibold text-green-800">🥬 الخضروات الورقية</p>
+                                        <p class="text-green-700 text-sm">السبانخ، الجرجير، الكرنب - غنية بالمغنيسيوم والحديد</p>
+                                    </div>
+                                    <div class="p-3 bg-green-50 rounded-lg">
+                                        <p class="font-semibold text-green-800">🍌 الفواكه الطازجة</p>
+                                        <p class="text-green-700 text-sm">الموز، البرتقال، الكيوي - تخفف التقلصات وغنية بالفيتامينات</p>
+                                    </div>
+                                    <div class="p-3 bg-green-50 rounded-lg">
+                                        <p class="font-semibold text-green-800">🌾 الحبوب الكاملة</p>
+                                        <p class="text-green-700 text-sm">الشوفان، الأرز البني - تعطي طاقة ثابتة</p>
+                                    </div>
+                                    <div class="p-3 bg-green-50 rounded-lg">
+                                        <p class="font-semibold text-green-800">🐟 الأسماك الدهنية</p>
+                                        <p class="text-green-700 text-sm">السلمون، السردين - غنية بالأوميغا 3</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="text-lg font-bold text-pink-800 mb-4 flex items-center gap-2">
+                                    <span>❌</span>
+                                    <span id="avoid-foods-title">أطعمة يُفضل تجنبها</span>
+                                </h4>
+                                <div class="space-y-3" id="avoid-foods">
+                                    <div class="p-3 bg-red-50 rounded-lg">
+                                        <p class="font-semibold text-red-800">🧂 الأطعمة المالحة</p>
+                                        <p class="text-red-700 text-sm">تزيد الانتفاخ والتورم</p>
+                                    </div>
+                                    <div class="p-3 bg-red-50 rounded-lg">
+                                        <p class="font-semibold text-red-800">🍟 المقليات</p>
+                                        <p class="text-red-700 text-sm">تزيد الالتهاب والألم</p>
+                                    </div>
+                                    <div class="p-3 bg-red-50 rounded-lg">
+                                        <p class="font-semibold text-red-800">☕ الكافيين</p>
+                                        <p class="text-red-700 text-sm">يزيد التوتر والتقلصات</p>
+                                    </div>
+                                    <div class="p-3 bg-red-50 rounded-lg">
+                                        <p class="font-semibold text-red-800">🍭 السكريات الصناعية</p>
+                                        <p class="text-red-700 text-sm">تسبب تقلبات في الطاقة</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 4: Mental Health -->
+                <div class="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden card-hover">
+                    <button onclick="toggleSection('mental')" class="w-full p-6 text-right bg-gradient-to-r from-pink-500 to-pink-400 text-white">
+                        <div class="flex items-center justify-between">
+                            <div class="text-3xl">💝</div>
+                            <h3 class="text-xl font-bold" id="mental-title">صحتك النفسية</h3>
+                            <div class="text-2xl" id="mental-arrow">▼</div>
+                        </div>
+                    </button>
+                    <div id="mental-content" class="section-content p-6">
+                        <div class="space-y-6" id="mental-tips">
+                            <div class="p-4 bg-purple-50 rounded-lg">
+                                <h5 class="font-bold text-purple-800 mb-2">🌙 اعترفي بالتقلبات المزاجية</h5>
+                                <p class="text-purple-700">هذا شيء طبيعي تماماً ولا تلومي نفسك عليه</p>
+                            </div>
+                            <div class="p-4 bg-purple-50 rounded-lg">
+                                <h5 class="font-bold text-purple-800 mb-2">🛏️ خذي قسطاً كافياً من الراحة</h5>
+                                <p class="text-purple-700">اصنعي زاوية مريحة في غرفتك مع بطانية دافئة وضوء خافت</p>
+                            </div>
+                            <div class="p-4 bg-purple-50 rounded-lg">
+                                <h5 class="font-bold text-purple-800 mb-2">🎨 مارسي نشاطاً يفرغ الطاقة</h5>
+                                <p class="text-purple-700">مشي قصير، سماع موسيقى، أو رسم - المهم تحريك المشاعر</p>
+                            </div>
+                            <div class="p-4 bg-yellow-50 rounded-lg border-r-4 border-yellow-400">
+                                <h5 class="font-bold text-yellow-800 mb-2">⚠️ ملاحظة مهمة</h5>
+                                <p class="text-yellow-700">إذا تشاجرتِ مع شخص تحبيه، أعيدي التفكير. لا تدعي الكبرياء يتحكم فيك، ولا تجلدي ذاتك</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 5: Exam Guide -->
+                <div class="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden card-hover">
+                    <button onclick="toggleSection('exam')" class="w-full p-6 text-right bg-gradient-to-r from-pink-500 to-pink-400 text-white">
+                        <div class="flex items-center justify-between">
+                            <div class="text-3xl">📚</div>
+                            <h3 class="text-xl font-bold" id="exam-title">دليل الامتحانات أثناء الدورة</h3>
+                            <div class="text-2xl" id="exam-arrow">▼</div>
+                        </div>
+                    </button>
+                    <div id="exam-content" class="section-content p-6">
+                        <div class="space-y-6" id="exam-tips">
+                            <div class="p-4 bg-blue-50 rounded-lg">
+                                <h5 class="font-bold text-blue-800 mb-3">📋 كوني مستعدة مسبقاً</h5>
+                                <ul class="text-blue-700 space-y-1 mr-4">
+                                    <li>• تتبعي موعد الدورة لتكوني جاهزة</li>
+                                    <li>• راجعي المكثف قبل موعد الألم بيومين</li>
+                                </ul>
+                            </div>
+                            <div class="p-4 bg-blue-50 rounded-lg">
+                                <h5 class="font-bold text-blue-800 mb-3">⏰ أثناء المراجعة</h5>
+                                <ul class="text-blue-700 space-y-1 mr-4">
+                                    <li>• استخدمي تقنية Pomodoro: 25 دقيقة دراسة + 5 دقائق راحة</li>
+                                    <li>• إذا كان الألم شديد: 15 دقيقة + 5 دقائق راحة</li>
+                                    <li>• تناولي أطعمة ترفع الطاقة: شوفان، تمر، مكسرات</li>
+                                </ul>
+                            </div>
+                            <div class="p-4 bg-green-50 rounded-lg">
+                                <h5 class="font-bold text-green-800 mb-3">📝 يوم الامتحان</h5>
+                                <ul class="text-green-700 space-y-1 mr-4">
+                                    <li>• استيقظي أبكر قليلاً لتأخذي وقتك بهدوء</li>
+                                    <li>• فطور مغذٍ: شوفان + موز + مكسرات</li>
+                                    <li>• خذي معك: قارورة ماء، مسكن بسيط، فوط صحية</li>
+                                    <li>• ابدئي بالأسئلة الأسهل لكسب الثقة</li>
+                                </ul>
+                            </div>
+                            <div class="p-4 bg-pink-50 rounded-lg border-r-4 border-pink-400">
+                                <h5 class="font-bold text-pink-800 mb-2">💕 لا تجلدي نفسك</h5>
+                                <p class="text-pink-700">حتى لو حصلتِ على علامة أقل من المتوقع، تذكري أن جسدك يمر بتغيرات طبيعية</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-pink-800 text-white py-8">
+            <div class="container mx-auto px-4 text-center">
+                <div class="text-4xl mb-4">🌸</div>
+                <p id="footer-text">دليلك الشخصي للعناية بصحتك - مع الحب 💕</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        let currentLanguage = 'ar';
+        let openSection = null;
+
+        const translations = {
+            ar: {
+                'welcome-title': 'مرحباً بك',
+                'welcome-subtitle': 'دليلك الشخصي للعناية بصحتك',
+                'gender-question': 'هل أنت أنثى؟',
+                'yes-btn': 'نعم',
+                'no-btn': 'لا',
+                'site-title': 'دليل الفتيات',
+                'hero-title': 'رحلتك نحو فهم جسدك بشكل أفضل',
+                'hero-subtitle': 'دليل شامل للعناية بصحتك أثناء الدورة الشهرية',
+                'tracker-title': 'تتبع الدورة الشهرية',
+                'tips-title': 'نصائح للألم والتقلصات',
+                'nutrition-title': 'نظام غذائي لفترتك',
+                'mental-title': 'صحتك النفسية',
+                'exam-title': 'دليل الامتحانات أثناء الدورة',
+                'last-period-label': 'تاريخ آخر دورة شهرية:',
+                'calculate-btn': 'احسبي موعد الدورة القادمة',
+                'result-title': 'النتيجة:',
+                'good-foods-title': 'أطعمة مفيدة',
+                'avoid-foods-title': 'أطعمة يُفضل تجنبها',
+                'footer-text': 'دليلك الشخصي للعناية بصحتك - مع الحب 💕',
+                'lang-toggle': 'English',
+                'header-lang-toggle': 'English'
+            },
+            en: {
+                'welcome-title': 'Welcome',
+                'welcome-subtitle': 'Your personal health guide',
+                'gender-question': 'Are you female?',
+                'yes-btn': 'Yes',
+                'no-btn': 'No',
+                'site-title': 'Girls Guide',
+                'hero-title': 'Your journey to better understand your body',
+                'hero-subtitle': 'Complete guide for period care and health',
+                'tracker-title': 'Period Tracker',
+                'tips-title': 'Pain & Cramp Relief Tips',
+                'nutrition-title': 'Nutrition for Your Period',
+                'mental-title': 'Mental Health',
+                'exam-title': 'Exam Guide During Period',
+                'last-period-label': 'Last period date:',
+                'calculate-btn': 'Calculate Next Period',
+                'result-title': 'Result:',
+                'good-foods-title': 'Beneficial Foods',
+                'avoid-foods-title': 'Foods to Avoid',
+                'footer-text': 'Your personal health guide - with love 💕',
+                'lang-toggle': 'العربية',
+                'header-lang-toggle': 'العربية'
+            }
+        };
+
+        // Content translations for sections
+        const contentTranslations = {
+            ar: {
+                painTips: [
+                    { icon: '🍵', text: 'اشربي شاي الأعشاب مثل البابونج، النعناع، أو الزنجبيل الدافئ' },
+                    { icon: '🔥', text: 'ضعي كمادة دافئة أو قنينة ماء ساخن على أسفل البطن' },
+                    { icon: '🧘‍♀️', text: 'جربي تمارين التمدد الخفيفة أو وضعيات يوغا بسيطة' },
+                    { icon: '🍫', text: 'تناولي أطعمة غنية بالمغنيسيوم (الشوكولا الداكنة، الموز، المكسرات)' },
+                    { icon: '🚫', text: 'ابتعدي عن المشروبات الغازية والكافيين لأنها تزيد التقلصات' }
+                ],
+                goodFoods: [
+                    { title: '🥬 الخضروات الورقية', desc: 'السبانخ، الجرجير، الكرنب - غنية بالمغنيسيوم والحديد' },
+                    { title: '🍌 الفواكه الطازجة', desc: 'الموز، البرتقال، الكيوي - تخفف التقلصات وغنية بالفيتامينات' },
+                    { title: '🌾 الحبوب الكاملة', desc: 'الشوفان، الأرز البني - تعطي طاقة ثابتة' },
+                    { title: '🐟 الأسماك الدهنية', desc: 'السلمون، السردين - غنية بالأوميغا 3' }
+                ],
+                avoidFoods: [
+                    { title: '🧂 الأطعمة المالحة', desc: 'تزيد الانتفاخ والتورم' },
+                    { title: '🍟 المقليات', desc: 'تزيد الالتهاب والألم' },
+                    { title: '☕ الكافيين', desc: 'يزيد التوتر والتقلصات' },
+                    { title: '🍭 السكريات الصناعية', desc: 'تسبب تقلبات في الطاقة' }
+                ]
+            },
+            en: {
+                painTips: [
+                    { icon: '🍵', text: 'Drink herbal teas like chamomile, mint, or warm ginger' },
+                    { icon: '🔥', text: 'Apply a warm compress or hot water bottle to lower abdomen' },
+                    { icon: '🧘‍♀️', text: 'Try gentle stretching exercises or simple yoga poses' },
+                    { icon: '🍫', text: 'Eat magnesium-rich foods (dark chocolate, bananas, nuts)' },
+                    { icon: '🚫', text: 'Avoid carbonated drinks and caffeine as they increase cramps' }
+                ],
+                goodFoods: [
+                    { title: '🥬 Leafy Greens', desc: 'Spinach, arugula, kale - rich in magnesium and iron' },
+                    { title: '🍌 Fresh Fruits', desc: 'Bananas, oranges, kiwi - reduce cramps and rich in vitamins' },
+                    { title: '🌾 Whole Grains', desc: 'Oats, brown rice - provide steady energy' },
+                    { title: '🐟 Fatty Fish', desc: 'Salmon, sardines - rich in omega-3' }
+                ],
+                avoidFoods: [
+                    { title: '🧂 Salty Foods', desc: 'Increase bloating and swelling' },
+                    { title: '🍟 Fried Foods', desc: 'Increase inflammation and pain' },
+                    { title: '☕ Caffeine', desc: 'Increases tension and cramps' },
+                    { title: '🍭 Artificial Sugars', desc: 'Cause energy fluctuations' }
+                ]
+            }
+        };
+
+        function toggleLanguage() {
+            currentLanguage = currentLanguage === 'ar' ? 'en' : 'ar';
+            document.documentElement.lang = currentLanguage;
+            document.documentElement.dir = currentLanguage === 'ar' ? 'rtl' : 'ltr';
+            
+            // Update all translatable elements
+            Object.keys(translations[currentLanguage]).forEach(key => {
+                const element = document.getElementById(key);
+                if (element) {
+                    element.textContent = translations[currentLanguage][key];
+                }
+            });
+
+            // Update section content
+            updateSectionContent();
+        }
+
+        function updateSectionContent() {
+            // Update pain tips
+            const painTipsContainer = document.getElementById('pain-tips');
+            if (painTipsContainer) {
+                painTipsContainer.innerHTML = contentTranslations[currentLanguage].painTips.map(tip => `
+                    <div class="flex items-start gap-3 p-4 bg-pink-50 rounded-lg">
+                        <div class="text-2xl">${tip.icon}</div>
+                        <p class="text-pink-800">${tip.text}</p>
+                    </div>
+                `).join('');
+            }
+
+            // Update good foods
+            const goodFoodsContainer = document.getElementById('good-foods');
+            if (goodFoodsContainer) {
+                goodFoodsContainer.innerHTML = contentTranslations[currentLanguage].goodFoods.map(food => `
+                    <div class="p-3 bg-green-50 rounded-lg">
+                        <p class="font-semibold text-green-800">${food.title}</p>
+                        <p class="text-green-700 text-sm">${food.desc}</p>
+                    </div>
+                `).join('');
+            }
+
+            // Update avoid foods
+            const avoidFoodsContainer = document.getElementById('avoid-foods');
+            if (avoidFoodsContainer) {
+                avoidFoodsContainer.innerHTML = contentTranslations[currentLanguage].avoidFoods.map(food => `
+                    <div class="p-3 bg-red-50 rounded-lg">
+                        <p class="font-semibold text-red-800">${food.title}</p>
+                        <p class="text-red-700 text-sm">${food.desc}</p>
+                    </div>
+                `).join('');
+            }
+
+            // Update mental health tips
+            const mentalTipsContainer = document.getElementById('mental-tips');
+            if (mentalTipsContainer && currentLanguage === 'en') {
+                mentalTipsContainer.innerHTML = `
+                    <div class="p-4 bg-purple-50 rounded-lg">
+                        <h5 class="font-bold text-purple-800 mb-2">🌙 Accept mood swings</h5>
+                        <p class="text-purple-700">This is completely natural, don't blame yourself</p>
+                    </div>
+                    <div class="p-4 bg-purple-50 rounded-lg">
+                        <h5 class="font-bold text-purple-800 mb-2">🛏️ Get enough rest</h5>
+                        <p class="text-purple-700">Create a cozy corner in your room with warm blankets and soft lighting</p>
+                    </div>
+                    <div class="p-4 bg-purple-50 rounded-lg">
+                        <h5 class="font-bold text-purple-800 mb-2">🎨 Do energy-releasing activities</h5>
+                        <p class="text-purple-700">Short walks, listening to music, or drawing - move your emotions outward</p>
+                    </div>
+                    <div class="p-4 bg-yellow-50 rounded-lg border-r-4 border-yellow-400">
+                        <h5 class="font-bold text-yellow-800 mb-2">⚠️ Important note</h5>
+                        <p class="text-yellow-700">If you argue with someone you love, reconsider. Don't let pride control you, and don't blame yourself unnecessarily</p>
+                    </div>
+                `;
+            } else if (mentalTipsContainer && currentLanguage === 'ar') {
+                mentalTipsContainer.innerHTML = `
+                    <div class="p-4 bg-purple-50 rounded-lg">
+                        <h5 class="font-bold text-purple-800 mb-2">🌙 اعترفي بالتقلبات المزاجية</h5>
+                        <p class="text-purple-700">هذا شيء طبيعي تماماً ولا تلومي نفسك عليه</p>
+                    </div>
+                    <div class="p-4 bg-purple-50 rounded-lg">
+                        <h5 class="font-bold text-purple-800 mb-2">🛏️ خذي قسطاً كافياً من الراحة</h5>
+                        <p class="text-purple-700">اصنعي زاوية مريحة في غرفتك مع بطانية دافئة وضوء خافت</p>
+                    </div>
+                    <div class="p-4 bg-purple-50 rounded-lg">
+                        <h5 class="font-bold text-purple-800 mb-2">🎨 مارسي نشاطاً يفرغ الطاقة</h5>
+                        <p class="text-purple-700">مشي قصير، سماع موسيقى، أو رسم - المهم تحريك المشاعر</p>
+                    </div>
+                    <div class="p-4 bg-yellow-50 rounded-lg border-r-4 border-yellow-400">
+                        <h5 class="font-bold text-yellow-800 mb-2">⚠️ ملاحظة مهمة</h5>
+                        <p class="text-yellow-700">إذا تشاجرتِ مع شخص تحبيه، أعيدي التفكير. لا تدعي الكبرياء يتحكم فيك، ولا تجلدي ذاتك</p>
+                    </div>
+                `;
+            }
+
+            // Update exam tips
+            const examTipsContainer = document.getElementById('exam-tips');
+            if (examTipsContainer && currentLanguage === 'en') {
+                examTipsContainer.innerHTML = `
+                    <div class="p-4 bg-blue-50 rounded-lg">
+                        <h5 class="font-bold text-blue-800 mb-3">📋 Be prepared in advance</h5>
+                        <ul class="text-blue-700 space-y-1 ml-4">
+                            <li>• Track your period to be ready</li>
+                            <li>• Review intensively two days before expected pain</li>
+                        </ul>
+                    </div>
+                    <div class="p-4 bg-blue-50 rounded-lg">
+                        <h5 class="font-bold text-blue-800 mb-3">⏰ During study time</h5>
+                        <ul class="text-blue-700 space-y-1 ml-4">
+                            <li>• Use Pomodoro technique: 25 min study + 5 min break</li>
+                            <li>• If pain is severe: 15 min + 5 min break</li>
+                            <li>• Eat energy-boosting foods: oats, dates, nuts</li>
+                        </ul>
+                    </div>
+                    <div class="p-4 bg-green-50 rounded-lg">
+                        <h5 class="font-bold text-green-800 mb-3">📝 Exam day</h5>
+                        <ul class="text-green-700 space-y-1 ml-4">
+                            <li>• Wake up a bit earlier to take your time calmly</li>
+                            <li>• Nutritious breakfast: oats + banana + nuts</li>
+                            <li>• Bring: water bottle, simple painkiller, pads</li>
+                            <li>• Start with easier questions to build confidence</li>
+                        </ul>
+                    </div>
+                    <div class="p-4 bg-pink-50 rounded-lg border-r-4 border-pink-400">
+                        <h5 class="font-bold text-pink-800 mb-2">💕 Don't be hard on yourself</h5>
+                        <p class="text-pink-700">Even if you get a lower grade than expected, remember your body is going through natural changes</p>
+                    </div>
+                `;
+            } else if (examTipsContainer && currentLanguage === 'ar') {
+                examTipsContainer.innerHTML = `
+                    <div class="p-4 bg-blue-50 rounded-lg">
+                        <h5 class="font-bold text-blue-800 mb-3">📋 كوني مستعدة مسبقاً</h5>
+                        <ul class="text-blue-700 space-y-1 mr-4">
+                            <li>• تتبعي موعد الدورة لتكوني جاهزة</li>
+                            <li>• راجعي المكثف قبل موعد الألم بيومين</li>
+                        </ul>
+                    </div>
+                    <div class="p-4 bg-blue-50 rounded-lg">
+                        <h5 class="font-bold text-blue-800 mb-3">⏰ أثناء المراجعة</h5>
+                        <ul class="text-blue-700 space-y-1 mr-4">
+                            <li>• استخدمي تقنية Pomodoro: 25 دقيقة دراسة + 5 دقائق راحة</li>
+                            <li>• إذا كان الألم شديد: 15 دقيقة + 5 دقائق راحة</li>
+                            <li>• تناولي أطعمة ترفع الطاقة: شوفان، تمر، مكسرات</li>
+                        </ul>
+                    </div>
+                    <div class="p-4 bg-green-50 rounded-lg">
+                        <h5 class="font-bold text-green-800 mb-3">📝 يوم الامتحان</h5>
+                        <ul class="text-green-700 space-y-1 mr-4">
+                            <li>• استيقظي أبكر قليلاً لتأخذي وقتك بهدوء</li>
+                            <li>• فطور مغذٍ: شوفان + موز + مكسرات</li>
+                            <li>• خذي معك: قارورة ماء، مسكن بسيط، فوط صحية</li>
+                            <li>• ابدئي بالأسئلة الأسهل لكسب الثقة</li>
+                        </ul>
+                    </div>
+                    <div class="p-4 bg-pink-50 rounded-lg border-r-4 border-pink-400">
+                        <h5 class="font-bold text-pink-800 mb-2">💕 لا تجلدي نفسك</h5>
+                        <p class="text-pink-700">حتى لو حصلتِ على علامة أقل من المتوقع، تذكري أن جسدك يمر بتغيرات طبيعية</p>
+                    </div>
+                `;
+            }
+        }
+
+        function checkGender(isFemale) {
+            if (isFemale) {
+                document.getElementById('initial-screen').classList.add('hidden');
+                document.getElementById('main-website').classList.remove('hidden');
+            } else {
+                // Create a custom modal instead of alert
+                const modal = document.createElement('div');
+                modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+                modal.innerHTML = `
+                    <div class="bg-white rounded-2xl p-8 max-w-sm mx-4 text-center">
+                        <div class="text-6xl mb-4">🚫</div>
+                        <h3 class="text-xl font-bold text-pink-800 mb-4">${currentLanguage === 'ar' ? 'عذراً!' : 'Sorry!'}</h3>
+                        <p class="text-pink-600 mb-6">${currentLanguage === 'ar' ? 'هذا المكان مخصص للبنات فقط! 💕' : 'This space is for girls only! 💕'}</p>
+                        <button onclick="this.parentElement.parentElement.remove()" class="bg-pink-500 hover:bg-pink-600 text-white px-6 py-2 rounded-full">
+                            ${currentLanguage === 'ar' ? 'حسناً' : 'OK'}
+                        </button>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+            }
+        }
+
+        function toggleSection(sectionId) {
+            const content = document.getElementById(sectionId + '-content');
+            const arrow = document.getElementById(sectionId + '-arrow');
+            
+            if (openSection && openSection !== sectionId) {
+                // Close previously open section
+                document.getElementById(openSection + '-content').classList.remove('active');
+                document.getElementById(openSection + '-arrow').textContent = '▼';
+            }
+            
+            if (content.classList.contains('active')) {
+                content.classList.remove('active');
+                arrow.textContent = '▼';
+                openSection = null;
+            } else {
+                content.classList.add('active');
+                arrow.textContent = '▲';
+                openSection = sectionId;
+            }
+        }
+
+        function calculateNextPeriod() {
+            const lastPeriodInput = document.getElementById('last-period-date');
+            const resultDiv = document.getElementById('result');
+            const nextPeriodSpan = document.getElementById('next-period-date');
+            const daysRemainingSpan = document.getElementById('days-remaining');
+            
+            if (!lastPeriodInput.value) {
+                alert(currentLanguage === 'ar' ? 'يرجى إدخال تاريخ آخر دورة شهرية' : 'Please enter your last period date');
+                return;
+            }
+            
+            const lastPeriod = new Date(lastPeriodInput.value);
+            const nextPeriod = new Date(lastPeriod);
+            nextPeriod.setDate(nextPeriod.getDate() + 28); // Average cycle length
+            
+            const today = new Date();
+            const timeDiff = nextPeriod.getTime() - today.getTime();
+            const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+            
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            const formattedDate = nextPeriod.toLocaleDateString('en-US', options);
+            
+            if (currentLanguage === 'ar') {
+                nextPeriodSpan.textContent = `الدورة القادمة متوقعة في: ${formattedDate}`;
+                if (daysDiff > 0) {
+                    daysRemainingSpan.textContent = `متبقي ${daysDiff} يوم`;
+                } else if (daysDiff === 0) {
+                    daysRemainingSpan.textContent = 'الدورة متوقعة اليوم!';
+                } else {
+                    daysRemainingSpan.textContent = `الدورة متأخرة بـ ${Math.abs(daysDiff)} يوم`;
+                }
+            } else {
+                nextPeriodSpan.textContent = `Next period expected: ${formattedDate}`;
+                if (daysDiff > 0) {
+                    daysRemainingSpan.textContent = `${daysDiff} days remaining`;
+                } else if (daysDiff === 0) {
+                    daysRemainingSpan.textContent = 'Period expected today!';
+                } else {
+                    daysRemainingSpan.textContent = `Period is ${Math.abs(daysDiff)} days late`;
+                }
+            }
+            
+            resultDiv.classList.remove('hidden');
+        }
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97982d6cb4612818',t:'MTc1NjkzMzIzNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
